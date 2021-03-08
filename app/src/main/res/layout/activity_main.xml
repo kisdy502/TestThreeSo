@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- Native 方法测试 -->
+    <Button
+        android:id="@+id/btn_t1"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_64"
+        android:layout_marginLeft="@dimen/size_108"
+        android:layout_marginTop="@dimen/size_64"
+        android:background="@drawable/bg_button_selector"
+        android:padding="4dp"
+        android:text="Native1"
+        android:textAllCaps="false"
+        android:textColor="@color/bg_color_selector"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_t2"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_64"
+        android:layout_marginLeft="@dimen/size_60"
+        android:layout_marginTop="@dimen/size_64"
+        android:background="@drawable/bg_button_selector"
+        android:padding="4dp"
+        android:text="Native2"
+        android:textAllCaps="false"
+        android:textColor="@color/bg_color_selector"
+
+        app:layout_constraintLeft_toRightOf="@+id/btn_t1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_t3"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_64"
+        android:layout_marginLeft="@dimen/size_60"
+        android:layout_marginTop="@dimen/size_64"
+        android:background="@drawable/bg_button_selector"
+        android:padding="4dp"
+        android:text="Native3"
+        android:textAllCaps="false"
+        android:textColor="@color/bg_color_selector"
+        app:layout_constraintLeft_toRightOf="@+id/btn_t2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_t4"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_64"
+        android:layout_marginLeft="@dimen/size_60"
+        android:layout_marginTop="@dimen/size_64"
+        android:background="@drawable/bg_button_selector"
+        android:padding="4dp"
+        android:text="Native4"
+        android:textAllCaps="false"
+        android:textColor="@color/bg_color_selector"
+        app:layout_constraintLeft_toRightOf="@+id/btn_t3"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_t5"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_64"
+        android:layout_marginLeft="@dimen/size_60"
+        android:layout_marginTop="@dimen/size_64"
+        android:background="@drawable/bg_button_selector"
+        android:padding="4dp"
+        android:text="Native5"
+        android:textAllCaps="false"
+        android:textColor="@color/bg_color_selector"
+        app:layout_constraintLeft_toRightOf="@+id/btn_t4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_t6"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_64"
+        android:layout_marginLeft="@dimen/size_60"
+        android:layout_marginTop="@dimen/size_64"
+        android:background="@drawable/bg_button_selector"
+        android:padding="4dp"
+        android:text="Native6"
+        android:textAllCaps="false"
+        android:textColor="@color/bg_color_selector"
+        app:layout_constraintLeft_toRightOf="@+id/btn_t5"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!-- 只能卡号 -->
+
+    <TextView
+        android:id="@+id/tv_smart_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/size_108"
+        android:layout_marginTop="@dimen/size_8"
+        android:text="native test"
+        android:textSize="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!-- 注册获取密钥 获取节目kdm -->
+    <Button
+        android:id="@+id/btn_register"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_64"
+        android:layout_marginLeft="@dimen/size_108"
+        android:layout_marginTop="@dimen/size_168"
+        android:background="@drawable/bg_button_selector"
+        android:padding="4dp"
+        android:text="register"
+        android:textColor="@color/bg_color_selector"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Button
+        android:id="@+id/btn_kdm"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_64"
+        android:layout_marginLeft="@dimen/size_60"
+        android:layout_marginTop="@dimen/size_168"
+        android:background="@drawable/bg_button_selector"
+        android:padding="4dp"
+        android:text="genKey"
+        android:textAllCaps="false"
+        android:textColor="@color/bg_color_selector"
+        app:layout_constraintLeft_toRightOf="@+id/btn_register"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_calc1"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_64"
+        android:layout_marginLeft="@dimen/size_60"
+        android:layout_marginTop="@dimen/size_168"
+        android:background="@drawable/bg_button_selector"
+        android:padding="4dp"
+        android:text="计算1"
+        android:textAllCaps="false"
+        android:textColor="@color/bg_color_selector"
+        app:layout_constraintLeft_toRightOf="@+id/btn_kdm"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_calc2"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_64"
+        android:layout_marginLeft="@dimen/size_60"
+        android:layout_marginTop="@dimen/size_168"
+        android:background="@drawable/bg_button_selector"
+        android:padding="4dp"
+        android:text="计算2"
+        android:textAllCaps="false"
+        android:textColor="@color/bg_color_selector"
+        app:layout_constraintLeft_toRightOf="@+id/btn_calc1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_calc3"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_64"
+        android:layout_marginLeft="@dimen/size_60"
+        android:layout_marginTop="@dimen/size_168"
+        android:background="@drawable/bg_button_selector"
+        android:padding="4dp"
+        android:text="计算3"
+        android:textAllCaps="false"
+        android:textColor="@color/bg_color_selector"
+        app:layout_constraintLeft_toRightOf="@+id/btn_calc2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_calc4"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_64"
+        android:layout_marginLeft="@dimen/size_60"
+        android:layout_marginTop="@dimen/size_168"
+        android:background="@drawable/bg_button_selector"
+        android:padding="4dp"
+        android:text="计算4"
+        android:textAllCaps="false"
+        android:textColor="@color/bg_color_selector"
+        app:layout_constraintLeft_toRightOf="@+id/btn_calc3"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <AutoCompleteTextView
+        android:id="@+id/tv_result"
+        android:layout_width="@dimen/size_800"
+        android:layout_height="@dimen/size_180"
+        android:layout_marginLeft="@dimen/size_160"
+        android:layout_marginTop="@dimen/size_320"
+        android:background="#E73C3C"
+        android:text="result:"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/size_32"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
