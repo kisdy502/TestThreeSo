@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,8 +29,8 @@ public class Category {
     @SerializedName("channelIds")
     private String channelIds;  //频道排序用
 
-    private List<Channel> channelList;
-    private List<Channel> originalChannelList;
+    private List<Channel> channelList=new ArrayList<>();
+    private List<Channel> originalChannelList=new ArrayList<>();
 
     private boolean playing;
     private boolean isExcluded;

@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
@@ -26,12 +25,11 @@ import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.device.DeviceInfo;
 import com.google.android.exoplayer2.device.DeviceListener;
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer;
-import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.source.BehindLiveWindowException;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
+import com.google.android.exoplayer2.source.MediaSourceFactory;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.hls.HlsManifest;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextOutput;
@@ -39,17 +37,16 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
+import com.sdt.testthreeso.utils.DemoUtil;
 import com.sdt.testthreeso.utils.LogWriter;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -71,7 +68,7 @@ public class PlayerActivity extends AppCompatActivity {
     private String m3u8Url = "https://38649.live-vod.cdn.aodianyun.com/clip/0x0/1d970d01e60ccaaa8ae85811fdcfb014/1d970d01e60ccaaa8ae85811fdcfb014.m3u8";
     private MediaItem mediaItem;
     private ProgressBar progressBar;
-
+    private DataSource.Factory dataSourceFactory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +101,7 @@ public class PlayerActivity extends AppCompatActivity {
         DefaultTrackSelector.ParametersBuilder builder =
                 new DefaultTrackSelector.ParametersBuilder(/* context= */ this);
         trackSelectorParameters = builder.build();
+        dataSourceFactory = DemoUtil.getDataSourceFactory(/* context= */ this);
     }
 
     @Override
@@ -163,47 +161,20 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void initializePlayer() {
-        HttpDataSource.Factory httpDataSourceFactory =
-                new DefaultHttpDataSource.Factory().setAllowCrossProtocolRedirects(true)
-                        .setTransferListener(new TransferListener() {
-                            @Override
-                            public void onTransferInitializing(DataSource source, DataSpec dataSpec, boolean isNetwork) {
 
-                            }
 
-                            @Override
-                            public void onTransferStart(DataSource source, DataSpec dataSpec, boolean isNetwork) {
-                                Log.d(TAG, "onTransferStart:" + isNetwork);
-                            }
-
-                            @Override
-                            public void onBytesTransferred(DataSource source, DataSpec dataSpec, boolean isNetwork, int bytesTransferred) {
-
-                            }
-
-                            @Override
-                            public void onTransferEnd(DataSource source, DataSpec dataSpec, boolean isNetwork) {
-                                Log.d(TAG, "onTransferEnd:" + isNetwork);
-                            }
-                        });
-        DefaultDataSourceFactory dataSourceFactory =
-                new DefaultDataSourceFactory(getApplicationContext(), httpDataSourceFactory);
-
+        boolean preferExtensionDecoders = false;
         RenderersFactory renderersFactory =
-                new DefaultRenderersFactory(getApplicationContext())
-                        .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
-
-        // Create a HLS media source pointing to a playlist uri.
-        HlsMediaSource hlsMediaSource =
-                new HlsMediaSource.Factory(dataSourceFactory)
-                        .setAllowChunklessPreparation(true)
-                        .createMediaSource(mediaItem);
+                DemoUtil.buildRenderersFactory(/* context= */ this, preferExtensionDecoders);
 
         trackSelector = new DefaultTrackSelector(/* context= */ this);
         trackSelector.setParameters(trackSelectorParameters);
 
+        MediaSourceFactory mediaSourceFactory =
+                new DefaultMediaSourceFactory(dataSourceFactory);
+
         player = new SimpleExoPlayer.Builder(/* context= */ this, renderersFactory)
-                .setMediaSourceFactory(new DefaultMediaSourceFactory(dataSourceFactory))
+                .setMediaSourceFactory(mediaSourceFactory)
                 .setTrackSelector(trackSelector)
                 .build();
         player.addListener(new PlayerEventListener());
@@ -352,6 +323,8 @@ public class PlayerActivity extends AppCompatActivity {
                         // Try calling httpError.getCause() to retrieve the underlying cause,
                         // although note that it may be null.
                     }
+                } else if (cause instanceof SocketTimeoutException) {
+                    LogWriter.writeText(getApplicationContext(), "SocketTimeout Source:" + m3u8Url);
                 }
                 LogWriter.writeText(getApplicationContext(), "Fail:" + m3u8Url);
             } else if (error.type == ExoPlaybackException.TYPE_RENDERER) {

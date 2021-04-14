@@ -29,7 +29,7 @@ public class Channel {
     private int _id;
 
     @SerializedName("channelId")
-    private String id;
+    private String channelId;
 
     @SerializedName("name")
     private String name;
@@ -50,7 +50,7 @@ public class Channel {
     private String channelPic;
 
     @SerializedName("channelCate")
-    private String categoryId;
+    private String channelCate;
 
     @SerializedName("listImg")
     private String listImg;
@@ -95,10 +95,10 @@ public class Channel {
 
     public Channel(String id, String name, String remoteNo, String categoryId) {
         super();
-        this.id = id;
+        this.channelId = id;
         this.name = name;
         this.remoteNo = remoteNo;
-        this.categoryId = categoryId;
+        this.channelCate = categoryId;
     }
 
     public int get_id() {
@@ -109,12 +109,12 @@ public class Channel {
         this._id = _id;
     }
 
-    public String getId() {
-        return id;
+    public String getChannelId() {
+        return channelId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 
     public String getName() {
@@ -173,12 +173,12 @@ public class Channel {
         this.remoteNo = remoteNo;
     }
 
-    public String getCategoryId() {
-        return categoryId;
+    public String getChannelCate() {
+        return channelCate;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setChannelCate(String channelCate) {
+        this.channelCate = channelCate;
     }
 
 
@@ -281,7 +281,7 @@ public class Channel {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("id: " + id);
+        builder.append("id: " + channelId);
         builder.append(", name: " + name);
         return builder.toString();
     }
@@ -307,7 +307,7 @@ public class Channel {
         if (channel == null) {
             return false;
         }
-        String cateId = channel.getCategoryId();
+        String cateId = channel.getChannelCate();
         if (TextUtils.isEmpty(cateId)) {
             return false;
         }

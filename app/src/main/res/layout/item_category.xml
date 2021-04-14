@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="@dimen/size_274"
+    android:layout_height="@dimen/size_144"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
+    android:background="@drawable/menu_category_item_selector"
+    android:focusable="true">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/img_playing_tag"
+        android:layout_width="@dimen/size_32"
+        android:layout_height="@dimen/size_32"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/size_24"
+        android:src="@drawable/playing_tag_selector" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/size_72"
+        android:layout_marginTop="@dimen/size_8"
+        android:textSize="@dimen/size_36" />
+</RelativeLayout>

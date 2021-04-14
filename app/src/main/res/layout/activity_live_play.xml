@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LivePlayActivity">
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/play_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/layout_debug_info"
+        android:layout_width="@dimen/size_824"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/size_14"
+        android:layout_marginRight="@dimen/size_32">
+
+        <TextView
+            android:id="@+id/tv_debug_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#AA595959"
+            android:padding="@dimen/size_12"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/size_24" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_state_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_debug_info"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/size_12"
+        android:layout_marginRight="@dimen/size_32"
+        android:background="#595959"
+        android:padding="@dimen/size_12"
+        android:textColor="#9cAcA9"
+        android:textSize="@dimen/size_26" />
+
+    <com.sdt.testthreeso.widget.ChannelMenuView
+        android:id="@+id/layout_channel_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+</RelativeLayout>

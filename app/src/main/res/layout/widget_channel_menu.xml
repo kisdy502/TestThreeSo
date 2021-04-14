@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.sdt.testthreeso.widget.TvRecyclerView
+        android:id="@+id/tv_recycler_category"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/ic_category_bg_default" />
+
+    <com.sdt.testthreeso.widget.TvRecyclerView
+        android:id="@+id/tv_recycler_channel"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/tv_recycler_category"
+        android:background="@drawable/ic_channel_bg" />
+
+</merge>

@@ -34,7 +34,6 @@ public class LiveSource {
 	}
 
 	public String getUrl() {
-
 		try {
 			if (url.startsWith("kds") || url.startsWith("http") || url.startsWith("p2p")) {
 				return url;

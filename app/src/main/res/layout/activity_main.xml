@@ -204,4 +204,69 @@
         android:textSize="@dimen/size_32"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <AutoCompleteTextView
+        android:id="@+id/t1"
+        android:layout_width="@dimen/size_400"
+        android:layout_height="@dimen/size_180"
+        android:layout_marginLeft="@dimen/size_160"
+        android:layout_marginTop="@dimen/size_560"
+        android:background="@drawable/flowview"
+        android:text="result:"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/size_32"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <AutoCompleteTextView
+        android:id="@+id/t2"
+        android:layout_width="@dimen/size_400"
+        android:layout_height="@dimen/size_180"
+        android:layout_marginLeft="@dimen/size_660"
+        android:layout_marginTop="@dimen/size_560"
+        android:background="@drawable/flowview01"
+        android:text="result:"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/size_32"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <AutoCompleteTextView
+        android:id="@+id/t3"
+        android:layout_width="@dimen/size_400"
+        android:layout_height="@dimen/size_180"
+        android:layout_marginLeft="@dimen/size_1160"
+        android:layout_marginTop="@dimen/size_560"
+        android:background="@drawable/flowview02"
+        android:text="result:"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/size_32"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <AutoCompleteTextView
+        android:id="@+id/t4"
+        android:layout_width="@dimen/size_400"
+        android:layout_height="@dimen/size_180"
+        android:layout_marginLeft="@dimen/size_160"
+        android:layout_marginTop="@dimen/size_780"
+        android:background="@drawable/ic_category_bg_default"
+        android:text="result:"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/size_32"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <AutoCompleteTextView
+        android:id="@+id/t5"
+        android:layout_width="@dimen/size_400"
+        android:layout_height="@dimen/size_180"
+        android:layout_marginLeft="@dimen/size_660"
+        android:layout_marginTop="@dimen/size_780"
+        android:background="@drawable/ic_channel_bg"
+        android:text="result:"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/size_32"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

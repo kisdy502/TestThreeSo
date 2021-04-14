@@ -2,49 +2,41 @@ package com.sdt.testthreeso;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.exoplayer2.ext.ffmpeg.FfmpegLibrary;
 import com.sdt.testthreeso.bean.BaseChannelsResultData;
-import com.sdt.testthreeso.bean.Channel;
-import com.sdt.testthreeso.bean.ChannelLiveSource;
-import com.sdt.testthreeso.bean.LiveSource;
-import com.sdt.testthreeso.bean.SourceDetailResultData;
 import com.sdt.testthreeso.net.LiveRetrofit;
+import com.sdt.testthreeso.repository.ChannelRepository;
+import com.sdt.testthreeso.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import a.a.d;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import mustang.with.With;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
-    private List<Channel> channelList = new ArrayList<>();
-    private int playIndex = 0;
-    private int sourceIndex = 0;
-    private Channel playingChannel = null;
-    private DataChangedReceiver receiver = new DataChangedReceiver();
+//    private DataChangedReceiver receiver = new DataChangedReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,22 +62,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             requestPermissions(new String[]{
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.RECORD_AUDIO,
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_CALENDAR,
-                    Manifest.permission.CALL_PHONE,
-                    Manifest.permission.SEND_SMS,
-                    Manifest.permission.READ_CONTACTS,
-                    Manifest.permission.BODY_SENSORS,
-                    Manifest.permission.READ_CALL_LOG,
             }, 0);
         }
 
-        IntentFilter filter = new IntentFilter("com.sdt.Intent.CHANGE_NEXT");
-        registerReceiver(receiver, filter);
+//        IntentFilter filter1 = new IntentFilter("com.sdt.Intent.CHANGE_NEXT_CATEGORY");
+//        IntentFilter filter2 = new IntentFilter("com.sdt.Intent.CHANGE_NEXT_CHANNEL");
+//        IntentFilter filter3 = new IntentFilter("com.sdt.Intent.CHANGE_NEXT_SOURCE");
+//        IntentFilter filter4 = new IntentFilter("com.sdt.Intent.CHANGE_TO_TARGET_CHANNEL");
+//        registerReceiver(receiver, filter1);
+//        registerReceiver(receiver, filter2);
+//        registerReceiver(receiver, filter3);
+//        registerReceiver(receiver, filter4);
         init();
         loadBaseData();
+        //App.getInstance().initWorkWithIntent();
+        showProgressDialog();
     }
 
     private ThreadPoolExecutor threadPoolExecutor;
@@ -103,108 +94,132 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         singleExecutor = Executors.newSingleThreadExecutor();
         onExecutor = Executors.newFixedThreadPool(1);
+
     }
 
 
     private void loadBaseData() {
         LiveRetrofit.getInstance().getApi().getBaseData("1", "0")
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<BaseChannelsResultData>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(BaseChannelsResultData baseChannelsResultData) {
-                channelList = baseChannelsResultData.getChannelList();
-                Log.d(TAG, "channelList:" + channelList.size());
-                playingChannel = channelList.get(playIndex);
-                getChannelDetail();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.e(TAG, "onError", e);
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        });
-    }
-
-    private void getChannelDetail() {
-        showDialog();
-        LiveRetrofit.getInstance().getApi().getChannelDetail(playingChannel.getId(), "1", "440300", "8")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<SourceDetailResultData>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-            }
-
-            @Override
-            public void onNext(SourceDetailResultData sourceDetailResultData) {
-                progressDialog.dismiss();
-                ChannelLiveSource channelLiveSource = sourceDetailResultData.getLiveSource();
-                if (channelLiveSource.getSourceList().isEmpty()) {
-                    Log.d(TAG, "no source list" + playingChannel.getName());
-                    playIndex++;
-                    playingChannel = channelList.get(playIndex);
-                    getChannelDetail();
-                } else {
-                    List<LiveSource> sourceList = channelLiveSource.getSourceList();
-                    for (LiveSource liveSource : sourceList) {
-                        Log.d(TAG, "liveSource:" + liveSource.getUrlType());
-                        Log.d(TAG, "liveSource:" + liveSource.getUrl());
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(new Function<BaseChannelsResultData, Integer>() {
+                    @Override
+                    public Integer apply(BaseChannelsResultData baseChannelsResultData) throws Exception {
+                        new ChannelRepository().handleChannelResult(baseChannelsResultData);
+                        return 1;
                     }
-                    playingChannel.setPlaySourceList(sourceList);
-                    sourceIndex = 0;
-                    startPlay();
-                }
-            }
+                })
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                progressDialog.dismiss();
-                Log.e(TAG, "onError", e);
-            }
+                    @Override
+                    public void onNext(Integer result) {
+                        dismissProgressDialog();
+                        Intent intent = new Intent(MainActivity.this, LivePlayActivity.class);
+                        startActivity(intent);
+                    }
 
-            @Override
-            public void onComplete() {
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError");
+                    }
 
-            }
-        });
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
 
-    private void startPlay() {
-        if (playingChannel.getPlaySourceList() != null && sourceIndex < playingChannel.getPlaySourceList().size() - 1) {
-            LiveSource liveSource = playingChannel.getPlaySourceList().get(sourceIndex);
-            if (liveSource.getUrlType() > 111 && liveSource.getUrlType() <= 1000) {
-                Intent intent = new Intent(this, PlayerActivity.class);
-                intent.putExtra("playUrl", liveSource.getUrl());
-                Log.d(TAG, "channel:" + playingChannel.getId());
-                Log.d(TAG, "channel:" + playingChannel.getName());
-                Log.d(TAG, "channelIndex:" + playIndex);
-                Log.d(TAG, "sourceIndex:" + sourceIndex);
-                startActivity(intent);
-            } else {
-                sourceIndex++;
-                startPlay();
-            }
-        } else {
-            playIndex++;
-            playingChannel = channelList.get(playIndex);
-            getChannelDetail();
-        }
-    }
+//    private void getChannelDetail() {
+//        showProgressDialog();
+//        LiveRetrofit.getInstance().getApi().getChannelDetail(playingChannel.getChannelId(), "1", "440300", "8")
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Observer<SourceDetailResultData>() {
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//                    }
+//
+//                    @Override
+//                    public void onNext(SourceDetailResultData sourceDetailResultData) {
+//                        handleDetail(sourceDetailResultData);
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        //progressDialog.dismiss();
+//                        Log.e(TAG, "onError", e);
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
+//    }
+
+//    private void handleDetail(SourceDetailResultData sourceDetail) {
+//        ChannelLiveSource channelLiveSource = sourceDetail.getLiveSource();
+//        if (channelLiveSource != null
+//                && channelLiveSource.getSourceList() != null
+//                && !channelLiveSource.getSourceList().isEmpty()) {
+//            List<LiveSource> sourceList = channelLiveSource.getSourceList();
+//            for (LiveSource liveSource : sourceList) {
+//                Log.d(TAG, "liveSource:" + liveSource.getUrlType());
+//                Log.d(TAG, "liveSource:" + liveSource.getUrl());
+//            }
+//            playingChannel.setPlaySourceList(sourceList);
+//            sourceIndex = 0;
+//            startPlay();
+//        } else {
+//            Log.d(TAG, "no source list" + playingChannel.getName());
+//            if (channelIndex == channelList.size() - 1) {
+//                changeCategory();  //播放到最后一个了
+//            } else {
+//                channelIndex++;
+//                playingChannel = channelList.get(channelIndex);
+//                getChannelDetail();
+//            }
+//
+//        }
+//    }
+
+
+//    private void startPlay() {
+//        if (playingChannel.getPlaySourceList() != null && sourceIndex < playingChannel.getPlaySourceList().size() - 1) {
+//            LiveSource liveSource = playingChannel.getPlaySourceList().get(sourceIndex);
+//            if (liveSource.getUrlType() > 111 && liveSource.getUrlType() <= 1000) {
+//                dismissProgressDialog();
+//                Intent intent = new Intent(this, LivePlayActivity.class);
+//                intent.putExtra("playUrl", liveSource.getUrl());
+//                intent.putExtra("channelName", playingChannel.getName());
+//                intent.putExtra("channelId", playingChannel.getChannelId());
+//                intent.putExtra("categoryIndex", categoryIndex);
+//                intent.putExtra("channelIndex", channelIndex);
+//                intent.putExtra("sourceIndex", sourceIndex);
+//                startActivity(intent);
+//            } else {
+//                sourceIndex++;
+//                startPlay();
+//            }
+//        } else {
+//            channelIndex++;
+//            playingChannel = channelList.get(channelIndex);
+//            getChannelDetail();
+//        }
+//    }
 
 
     private ProgressDialog progressDialog;
 
-    private void showDialog() {
+    private void showProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            return;
+        }
         progressDialog = new ProgressDialog(MainActivity.this);
         // 设置进度条风格，风格为圆形，旋转的
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -220,6 +235,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         progressDialog.setCancelable(true);
         // 让ProgressDialog显示
         progressDialog.show();
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
 
@@ -238,10 +259,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
         } else if (id == R.id.btn_t2) {
-
+            FileUtils.printAllDirectory(getApplicationContext());
         } else if (id == R.id.btn_t3) {
-            startActivity(new Intent(MainActivity.this, PlayerActivity.class));
+            Intent intent = new Intent(this, LivePlayActivity.class);
+            startActivity(intent);
         } else if (id == R.id.btn_t4) {
+            String ffmpegVersion = FfmpegLibrary.getVersion();
+            Log.d(TAG, "ffmpeg so version:" + ffmpegVersion);
         } else if (id == R.id.btn_t5) {
             String data = "admin";
             FunCaller.encryptString(data);
@@ -267,6 +291,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d(TAG, "calcDistance result:" + d);
         } else if (id == R.id.btn_calc4) {
 
+            try {
+                Log.d(TAG, "b:" + With.b.toJSONString());
+                Log.d(TAG, "c" + With.c);
+                Log.d(TAG, "d:" + With.d);
+//                With.a();
+//                List<a.c.a> list = new ArrayList<>();
+//                Runnable r = new a.c.b(list);
+//                new Thread(r).start();
+//
+//                With.b("请求监测地址错误,code=,url=");
+                onExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        String text = a.a.a.a(With.b.toJSONString());
+                        Log.d(TAG, "text:" + text);
+                        d<String, Integer> dd = a.a.c.a().b("http://ad-c2s.fengmanginfo.com/v1/c", a.a.a.a(With.b.toJSONString()));
+                        Log.d(TAG, "dd:" + dd.a);
+                        Log.d(TAG, "dd:" + dd.b);
+                        Log.d(TAG, "解密response:" + With.a(dd.a).toJSONString());
+
+                        With.a(new IOException("test"));
+                    }
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -274,17 +326,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(receiver);
     }
 
-    private class DataChangedReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Log.d(TAG, action + ":" + sourceIndex);
-            ++sourceIndex;
-            startPlay();
-        }
-    }
+//    private class DataChangedReceiver extends BroadcastReceiver {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            if (action.equalsIgnoreCase("com.sdt.Intent.CHANGE_NEXT_CATEGORY")) {
+//                changeCategory();
+//            } else if (action.equalsIgnoreCase("com.sdt.Intent.CHANGE_NEXT_CHANNEL")) {
+//                if (channelIndex == channelList.size() - 1) {
+//                    changeCategory();  //播放到最后一个了
+//                } else {
+//                    ++channelIndex;
+//                    playingChannel = channelList.get(channelIndex);
+//                    getChannelDetail();
+//                }
+//            } else if (action.equalsIgnoreCase("com.sdt.Intent.CHANGE_NEXT_SOURCE")) {
+//                Log.d(TAG, action + ":" + sourceIndex);
+//                ++sourceIndex;
+//                startPlay();
+//            } else if (action.equalsIgnoreCase("com.sdt.Intent.CHANGE_TO_TARGET_CHANNEL")) {
+//                categoryIndex = intent.getIntExtra("categoryIndex", 0);
+//                channelIndex = intent.getIntExtra("channelIndex", 0);
+//                sourceIndex = 0;
+//                channelList = GlobalChannelManager.getInstance().getCategoryList().get(categoryIndex).getChannelList();
+//                playingChannel = channelList.get(channelIndex);
+//                Log.d(TAG, "categoryIndex" + categoryIndex);
+//                Log.d(TAG, "channelIndex" + channelIndex);
+//                getChannelDetail();
+//            }
+//        }
+//    }
+
+//    private void changeCategory() {
+//        ++categoryIndex;
+//        channelIndex = 0;
+//        channelList = GlobalChannelManager.getInstance().getCategoryList().get(categoryIndex).getChannelList();
+//        if (channelList == null || channelList.isEmpty()) {
+//            Log.d(TAG, "channelList is empty");
+//            return;
+//        }
+//        Log.d(TAG, "channelList:" + channelList.size());
+//        playingChannel = channelList.get(channelIndex);
+//        getChannelDetail();
+//    }
 }
 

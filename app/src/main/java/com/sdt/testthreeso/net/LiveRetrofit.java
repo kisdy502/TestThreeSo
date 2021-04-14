@@ -34,7 +34,7 @@ public class LiveRetrofit {
         OkHttpClient.Builder mBuilder = new OkHttpClient.Builder();
         mBuilder.addInterceptor(new ChangeBaseUrlInterceptor());
         //日志拦截影响性能，线上保持关闭
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG || true) {
             mBuilder.addInterceptor(new LoggingInterceptor
                     .Builder()//构建者模式
                     .loggable(true) //是否开启日志打印
